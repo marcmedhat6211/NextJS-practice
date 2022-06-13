@@ -56,6 +56,14 @@ const HomePage = (props) => {
  *
  * How it Works?
  *    It waits until your data is loaded, and then it returns the props that is then used in the rendered component
+ *
+ * A major problem with the getStaticProps method, is that it runs during the build process
+ * What that means is that if there are changed data on the database, we will know nothing about it, "we have to run 'npm run build' again and deploy again in order for us to render the new data"
+ * The Solutions for that is another key in the object that the getStaticProps method returns
+ * That key is named "revalidate"
+ *    When we add the revalidate property we unlock a feture called "Incremental Static Generation"
+ *    The value of the revalidate key is an integer representing the number of seconds NextJS will wait to regenerate this page for an icoming request
+ *    This means that with this number given, this page will not only be generated during the build process but it will also be generated every n seconds on the server if there are requests
  */
 export const getStaticProps = async () => {
   // fetch data from an API
@@ -63,6 +71,7 @@ export const getStaticProps = async () => {
     props: {
       meetups: DUMMY_MEETUPS,
     },
+    revalidate: 10,
   };
 };
 
