@@ -43,6 +43,28 @@ const HomePage = (props) => {
 };
 
 /**
+ * This method unlike the getStaticProps method runs on every request
+ * no need to return the revalidate property along with the returned object because simply it automatically runs on every incoming request
+ * it receives a context param
+ * this context param holds the request and the response from the server
+ * you can perform actions (secured actions) on request and response because this method is secured, it only runs on the server
+ * only use it in 2 cases
+ *    if your data is changed every second or frequently
+ *    if you need access to that incoming request (for authentication for example)
+ * Other than that, getStaticProps is better to use and is FASTER
+ */
+// export const getServerSideProps = (context) => {
+//   req = context.req;
+//   res = context.res;
+//   // fetch an API
+//   return {
+//     props: {
+//       meetups: DUMMY_MEETUPS,
+//     },
+//   };
+// };
+
+/**
  * This method is only allowed in the "pages" firectory, in other words, in a "page" component
  * The method has to be named "getStaticProps" -> reserved name
  * This method allows NextJS pre render the fetched data and includes it in the html file on the server
