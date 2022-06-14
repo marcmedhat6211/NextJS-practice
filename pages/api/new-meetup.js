@@ -20,11 +20,11 @@ const handle = async (req, res) => {
   if (req.method === "POST") {
     const data = req.body;
 
-    const { title, image, address, description } = data;
+    // const { title, image, address, description } = data;
 
     // this should never be exposed to the client side, it is very safe here
     const client = await MongoClient.connect(
-      "mongodb+srv://marcmedhat6211:Jesus@5519@cluster0.rbkde.mongodb.net/meetups?retryWrites=true&w=majority"
+      "mongodb+srv://marcmedhat6211:marcmedhatdev@cluster0.rbkde.mongodb.net/?retryWrites=true&w=majority"
     );
     const db = client.db(); // db will be created on the fly if no db is there
 
