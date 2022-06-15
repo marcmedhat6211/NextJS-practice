@@ -51,7 +51,14 @@ export const getStaticPaths = async () => {
   client.close(); // not required but recommended
 
   return {
-    fallback: false,
+    /**
+     * There are 3 options for fallback here
+     * true, false, and blocking
+     *    false: means that you don't have any other paths you want to add (ids, or slugs)
+     *    true: there are other paths that will be pre rendered dynamically on demand (the server will render a blank page to the user until the data is fetched and the page is rendered)
+     *    blocking: there are other paths that will be pre rendered dynamically on demand (the server won't render anything to the user untill the page is pre rendered on the server successfully, a case that can be handled)
+     */
+    fallback: "blocking",
     // paths: [
     //   {
     //     params: {
