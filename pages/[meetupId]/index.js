@@ -1,19 +1,27 @@
+import Head from "next/head";
 import { MongoClient, ObjectId } from "mongodb"; // mongo db deals with the collection id as an object, so we have to use the mongo ObjectId method when comparing our id to mongo's
+import { Fragment } from "react";
 
 import MeetupDetail from "../../components/meetups/MeetupDetail";
 
 const MeetupDetails = (props) => {
   return (
-    <MeetupDetail
-      // image="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Stadtbild_M%C3%BCnchen.jpg/1280px-Stadtbild_M%C3%BCnchen.jpg"
-      // title="A First Meetup"
-      // address="Some Street 5, Some City"
-      // description="The meetup description"
-      image={props.meetupData.image}
-      title={props.meetupData.title}
-      address={props.meetupData.address}
-      description={props.meetupData.description}
-    />
+    <Fragment>
+      <Head>
+        <title>{props.meetupData.title}</title>
+        <meta name="description" content={props.meetupData.description} />
+      </Head>
+      <MeetupDetail
+        // image="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Stadtbild_M%C3%BCnchen.jpg/1280px-Stadtbild_M%C3%BCnchen.jpg"
+        // title="A First Meetup"
+        // address="Some Street 5, Some City"
+        // description="The meetup description"
+        image={props.meetupData.image}
+        title={props.meetupData.title}
+        address={props.meetupData.address}
+        description={props.meetupData.description}
+      />
+    </Fragment>
   );
 };
 

@@ -1,7 +1,10 @@
 // import { useEffect, useState } from "react";
+import Head from "next/head"; // the head component allows you to add head tags to your page
+
 import { MongoClient } from "mongodb"; // this import will never be a part of the client, this is something that NextJS does, it will never expose this import as it's not for the client to see!
 
 import MeetupList from "../components/meetups/MeetupList";
+import { Fragment } from "react";
 
 const DUMMY_MEETUPS = [
   {
@@ -41,7 +44,18 @@ const HomePage = (props) => {
   /**
    * After using the getStaticProps method, we now do not need the useEffect nor the state because our data is ready and sent through the props object
    */
-  return <MeetupList meetups={props.meetups} />;
+  return (
+    <Fragment>
+      <Head>
+        <title>React Meetups</title>
+        <meta
+          name="description"
+          content="Browse a huge list of highly active React meetups!"
+        />
+      </Head>
+      <MeetupList meetups={props.meetups} />
+    </Fragment>
+  );
 };
 
 /**
