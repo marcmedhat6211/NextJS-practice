@@ -1,4 +1,6 @@
 // import { useEffect, useState } from "react";
+import { MongoClient } from "mongodb"; // this import will never be a part of the client, this is something that NextJS does, it will never expose this import as it's not for the client to see!
+
 import MeetupList from "../components/meetups/MeetupList";
 
 const DUMMY_MEETUPS = [
@@ -89,9 +91,25 @@ const HomePage = (props) => {
  */
 export const getStaticProps = async () => {
   // fetch data from an API
+  const client = await MongoClient.connect(
+    "mongodb+srv://marcmedhat6211:marcmedhatdev@cluster0.rbkde.mongodb.net/?retryWrites=true&w=majority"
+  );
+
+  const db = client.db();
+  const meetupsCollection = db.collection("meetups");
+
+  const meetups = await meetupsCollection.find().toArray(); // the .find() will return all records
+
+  client.close();
+
   return {
     props: {
-      meetups: DUMMY_MEETUPS,
+      meetups: meetups.map((meetup) => ({
+        id: meetup._id.toString(),
+        title: meetup.title,
+        address: meetup.address,
+        image: meetup.image,
+      })),
     },
     revalidate: 10,
   };

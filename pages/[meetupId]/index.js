@@ -1,12 +1,18 @@
+import { MongoClient, ObjectId } from "mongodb"; // mongo db deals with the collection id as an object, so we have to use the mongo ObjectId method when comparing our id to mongo's
+
 import MeetupDetail from "../../components/meetups/MeetupDetail";
 
-const MeetupDetails = () => {
+const MeetupDetails = (props) => {
   return (
     <MeetupDetail
-      image="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Stadtbild_M%C3%BCnchen.jpg/1280px-Stadtbild_M%C3%BCnchen.jpg"
-      title="A First Meetup"
-      address="Some Street 5, Some City"
-      description="The meetup description"
+      // image="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Stadtbild_M%C3%BCnchen.jpg/1280px-Stadtbild_M%C3%BCnchen.jpg"
+      // title="A First Meetup"
+      // address="Some Street 5, Some City"
+      // description="The meetup description"
+      image={props.meetupData.image}
+      title={props.meetupData.title}
+      address={props.meetupData.address}
+      description={props.meetupData.description}
     />
   );
 };
@@ -20,20 +26,41 @@ const MeetupDetails = () => {
  * The fallback feature is a nice feature that allows you to pre generate all the pages that you know that will be visited more frequently and let it generate dynamically the rest of the pages for any upcoming request
  */
 export const getStaticPaths = async () => {
+  const client = await MongoClient.connect(
+    "mongodb+srv://marcmedhat6211:marcmedhatdev@cluster0.rbkde.mongodb.net/?retryWrites=true&w=majority"
+  );
+
+  const db = client.db();
+  const meetupsCollection = db.collection("meetups");
+
+  /**
+   * you can define a criteria to the find method if you want to filter somehow
+   * the second argument is an object defining the fields i want to return
+   * so here we're only fetching the ids
+   */
+  const meetups = await meetupsCollection.find({}, { _id: 1 }).toArray();
+
+  client.close(); // not required but recommended
+
   return {
     fallback: false,
-    paths: [
-      {
-        params: {
-          meetupId: "m1",
-        },
+    // paths: [
+    //   {
+    //     params: {
+    //       meetupId: "m1",
+    //     },
+    //   },
+    //   {
+    //     params: {
+    //       meetupId: "m2",
+    //     },
+    //   },
+    // ],
+    paths: meetups.map((meetup) => ({
+      params: {
+        meetupId: meetup._id.toString(),
       },
-      {
-        params: {
-          meetupId: "m2",
-        },
-      },
-    ],
+    })),
   };
 };
 
@@ -46,18 +73,38 @@ export const getStaticPaths = async () => {
  */
 export const getStaticProps = async (context) => {
   // fetch single meetup from some api
+  const meetupId = context.params.meetupId;
 
-  meetupId = context.params.meetupId;
+  const client = await MongoClient.connect(
+    "mongodb+srv://marcmedhat6211:marcmedhatdev@cluster0.rbkde.mongodb.net/?retryWrites=true&w=majority"
+  );
+
+  const db = client.db();
+  const meetupsCollection = db.collection("meetups");
+
+  const selectedMeetup = await meetupsCollection.findOne({
+    _id: ObjectId(meetupId),
+  });
 
   return {
+    // props: {
+    //   meetupData: {
+    //     id: meetupId,
+    //     image:
+    //       "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Stadtbild_M%C3%BCnchen.jpg/1280px-Stadtbild_M%C3%BCnchen.jpg",
+    //     title: "A First Meetup",
+    //     address: "Some Street 5, Some City",
+    //     description: "The meetup description",
+    //   },
+    // },
+
     props: {
       meetupData: {
-        id: meetupId,
-        image:
-          "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Stadtbild_M%C3%BCnchen.jpg/1280px-Stadtbild_M%C3%BCnchen.jpg",
-        title: "A First Meetup",
-        address: "Some Street 5, Some City",
-        description: "The meetup description",
+        id: selectedMeetup._id.toString(),
+        title: selectedMeetup.title,
+        image: selectedMeetup.image,
+        address: selectedMeetup.address,
+        description: selectedMeetup.description,
       },
     },
   };
